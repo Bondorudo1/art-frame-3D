@@ -1,4 +1,4 @@
-// export interface SizeProps {
-//    sizeWidth: number;
-//    sizeHeight: number;
-//  }
+export interface SizeProps {
+   boxWidth: number;
+   boxHeight: number;
+ }

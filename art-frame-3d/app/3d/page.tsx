@@ -18,7 +18,7 @@ export default function page() {
       >
         <OrbitControls makeDefault />
         <Lights />
-        <Frames  />
+        <Frames boxWidth={50} boxHeight={50} />
       </Canvas>
       <Leva />
     </>

@@ -1,18 +1,20 @@
 import { Suspense } from "react";
 
 import Frame from "../Frame/Frame";
+import { SizeProps } from "./SizeProps";
 
-export default function Frames() {
+export default function Frames({ boxHeight, boxWidth }: SizeProps) {
   return (
     <>
       <group>
         <Suspense fallback={null}>
           <Frame //bottom frame
             angle={45}
-            scale={0.5}
+            scale={1}
+            position={[boxHeight/2+1.07, 0, -6]} // Directly pass the array for position
             mirror={true}
           />
-          <Frame //top frame
+          {/* <Frame //top frame
             angle={135}
             rotation={Math.PI} // Directly pass the number for rotation
             scale={0.5}
@@ -31,9 +33,9 @@ export default function Frames() {
             position={[0, 0, 0]} // Directly pass the array for position
             scale={0.5}
             mirror={true}
-          />
-          <mesh scale={25} castShadow position={[2, 0, 0]}>
-            <boxGeometry />
+          /> */}
+          <mesh scale={1} castShadow position={[0, -0.6, 0]}>
+            <boxGeometry args={[boxHeight, 1, boxWidth]} />
             <meshStandardMaterial color={"red"} />
           </mesh>
         </Suspense>
@@ -41,4 +43,3 @@ export default function Frames() {
     </>
   );
 }
-
