@@ -6,4 +6,5 @@ export type ModelProps = {
   rotation?: Euler | undefined; // Rotation in radians for the frame
   side?: "front" | "back";
   mirror?: boolean; // Side of the clipping plane
+  positionY?: number; // Ensure positionY is included here
 } & JSX.IntrinsicElements["group"]; // Include props for a Three.js group element

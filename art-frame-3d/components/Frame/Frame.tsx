@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useControls } from "leva";
-import { ModelProps } from "./ModelProps"; // Import the type
-// import { or } from "three/webgpu";
+import { ModelProps } from "./ModelProps";
 
 export default function Frame({
   angle,
@@ -11,31 +10,46 @@ export default function Frame({
   side = "front",
   ...props
 }: ModelProps) {
+  const modelRef = useRef<THREE.Object3D>();
+  const [size, setSize] = useState({ x: 0, y: 0, z: 0 });
+
   const { scene: originalScene } = useGLTF("/Models/APPLIED1.glb");
+
+  useEffect(() => {
+    if (modelRef.current) {
+      const boundingBox = new THREE.Box3().setFromObject(modelRef.current);
+      const newSize = new THREE.Vector3();
+      boundingBox.getSize(newSize);
+
+      setSize({ x: newSize.x, y: newSize.y, z: newSize.z });
+
+      console.log("Width:", newSize.x);
+      console.log("Height:", newSize.y);
+      console.log("Depth:", newSize.z);
+    }
+  }, [originalScene]);
 
   // Clone the scene to ensure uniqueness
   const scene = useMemo(() => {
     const clone = originalScene.clone();
-    clone.updateMatrixWorld(); // Ensure the clone’s transforms are up-to-date
+    clone.updateMatrixWorld();
     return clone;
   }, [originalScene]);
-  console.log(originalScene);
+
   const { planeYPosition } = useControls("Clipping Plane", {
     planeYPosition: {
-      value: 0,
+      value: 21.74,
       min: -50,
-      max: 50,
+      max: 21.74,
       step: 0.01,
     },
   });
 
-  // Calculate the clipping plane's normal vector
   const planeNormal = useMemo(() => {
-    const radians = (angle * Math.PI) / 180; // Convert angle to radians
+    const radians = (angle * Math.PI) / 180;
     return new THREE.Vector3(Math.cos(radians), 0, Math.sin(radians));
   }, [angle]);
 
-  // Adjust plane constant based on the side ("front" or "back")
   const adjustedPlaneYPosition = useMemo(
     () => (side === "back" ? -planeYPosition : planeYPosition),
     [planeYPosition, side]
@@ -47,6 +61,15 @@ export default function Frame({
   );
 
   useEffect(() => {
+    // Update plane constant to follow the model's position
+    const updateClippingPlane = () => {
+      if (modelRef.current) {
+        const modelPosition = new THREE.Vector3();
+        modelRef.current.getWorldPosition(modelPosition);
+        plane.constant = adjustedPlaneYPosition - planeNormal.dot(modelPosition);
+      }
+    };
+
     // Apply unique clipping plane and shadow properties to the cloned scene
     scene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
@@ -54,7 +77,6 @@ export default function Frame({
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        // Ensure each instance has unique material properties
         if (mesh.material instanceof THREE.Material) {
           mesh.material = mesh.material.clone();
           mesh.material.clippingPlanes = [plane];
@@ -63,14 +85,22 @@ export default function Frame({
         }
       }
     });
-  }, [scene, plane]);
+
+    updateClippingPlane(); // Initial update
+  }, [scene, plane, planeNormal, adjustedPlaneYPosition]);
 
   return (
     <>
-      <primitive object={scene} rotation-y={rotation} {...props} />
+      <primitive
+        ref={modelRef}
+        object={scene}
+        rotation-y={rotation}
+        {...props}
+      />
       <primitive
         object={new THREE.PlaneHelper(plane, 5, 0xff0000)} // 5 is the size, red is the color
       />
     </>
   );
 }
+

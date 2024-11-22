@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import Frame from "../Frame/Frame";
 import { SizeProps } from "./SizeProps";
 
-export default function Frames({ boxHeight, boxWidth }: SizeProps) {
+export default function Frames({ boxHeight, boxWidth, positionY }: SizeProps) {
   return (
     <>
       <group>
@@ -11,7 +11,8 @@ export default function Frames({ boxHeight, boxWidth }: SizeProps) {
           <Frame //bottom frame
             angle={45}
             scale={1}
-            position={[boxHeight/2+1.07, 0, -6]} // Directly pass the array for position
+            position={[boxHeight/2+1.07, 0, positionY]}
+            positionY={positionY} // Directly pass the array for position
             mirror={true}
           />
           {/* <Frame //top frame

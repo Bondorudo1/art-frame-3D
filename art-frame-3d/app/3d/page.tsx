@@ -14,11 +14,11 @@ export default function page() {
         onCreated={(state) => (state.gl.localClippingEnabled = true)}
         dpr={[1, 2]}
         shadows
-        style={{ background: "#ffffff" }}
+        style={{ background: "#c9c7c7" }}
       >
         <OrbitControls makeDefault />
         <Lights />
-        <Frames boxWidth={50} boxHeight={50} />
+        <Frames boxWidth={50} boxHeight={50} positionY={-6} />
       </Canvas>
       <Leva />
     </>
