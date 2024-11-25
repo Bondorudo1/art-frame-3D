@@ -1,46 +1,79 @@
-import { Suspense } from "react";
+// import { Suspense } from "react";
+// import Frame from "../Frame/Frame";
+// import { SizeProps } from "./SizeProps";
 
+// export default function Frames({ boxHeight, boxWidth, positionY }: SizeProps) {
+//   const precise = (value: number) => parseFloat(value.toFixed(6)); // Precision adjustment
+
+//   return (
+//     <>
+//       <group>
+//         <Suspense fallback={null}>
+//           {/* Frame 1 */}
+//           <Frame
+//             angle={45}
+//             scale={1}
+//             rotation={[0, 0, Math.PI / 2]} // Rotated by 90 degrees around Z
+//             position={[-0.9, precise(boxHeight / 2 + 0.5), 0]} // Adjusted precision
+//             positionY={positionY}
+//             mirror={true}
+//           />
+
+//           Frame 2
+//           <Frame
+//             angle={45}
+//             scale={1}
+//             rotation={[Math.PI / 2, 0, Math.PI / 2]} // Rotated by 90 degrees around Z
+//             position={[-0.9, precise(boxHeight / 2 + 0.5-10), precise(boxWidth / 2)]} // Adjusted for alignment
+//             positionY={positionY}
+//             mirror={true}
+//           />
+
+
+
+//           {/* Main Mesh */}
+//           <mesh scale={1} castShadow position={[0, -0.6, 0]}>
+//             <boxGeometry args={[1, boxHeight, boxWidth]} />
+//             <meshStandardMaterial color={"red"} />
+//           </mesh>
+//         </Suspense>
+//       </group>
+//     </>
+//   );
+// }
+
+
+import React from "react";
+import { Suspense } from "react";
 import Frame from "../Frame/Frame";
 import { SizeProps } from "./SizeProps";
 
-export default function Frames({ boxHeight, boxWidth, positionY }: SizeProps) {
+export default function Frames({ boxHeight, boxWidth }: SizeProps) {
+  const precise = (value: number) => parseFloat(value.toFixed(6)); // Precision adjustment
+
   return (
-    <>
-      <group>
-        <Suspense fallback={null}>
-          <Frame //bottom frame
-            angle={45}
-            scale={1}
-            position={[boxHeight/2+1.07, 0, positionY]}
-            positionY={positionY} // Directly pass the array for position
-            mirror={true}
-          />
-          {/* <Frame //top frame
-            angle={135}
-            rotation={Math.PI} // Directly pass the number for rotation
-            scale={0.5}
-            // Directly pass the array for position
-            mirror={true}
-          />
-          <Frame //left frame
-            angle={260}
-            rotation={Math.PI / 2} // Euler object is fine
-            scale={0.5}
-            mirror={true}
-          />
-          <Frame //right frame
-            angle={135}
-            rotation={-Math.PI / 2} // Euler object is fine
-            position={[0, 0, 0]} // Directly pass the array for position
-            scale={0.5}
-            mirror={true}
-          /> */}
-          <mesh scale={1} castShadow position={[0, -0.6, 0]}>
-            <boxGeometry args={[boxHeight, 1, boxWidth]} />
-            <meshStandardMaterial color={"red"} />
-          </mesh>
-        </Suspense>
-      </group>
-    </>
+    <group>
+      <Suspense fallback={null}>
+        <Frame
+          angles={[45]} // Two angles
+          rotations={[
+            [0, 0, Math.PI / 2], // Rotation for frame 1
+            [Math.PI / 2, 0, Math.PI / 2], // Rotation for frame 2
+          ]}
+          positions={[
+            [-0.9, precise(boxHeight / 2 + 0.5), 0], // Position for frame 1
+            [-0.9, precise(boxHeight / 2 + 0.5-11), precise(boxWidth / 2)+0.84], // Position for frame 2
+          ]}
+          scale={1}
+          mirror={true}
+        />
+
+        {/* Main Mesh */}
+        <mesh scale={1} castShadow position={[0, -0.6, 0]}>
+          <boxGeometry args={[1, boxHeight, boxWidth]} />
+          <meshStandardMaterial color={"red"} />
+        </mesh>
+      </Suspense>
+    </group>
   );
 }

@@ -1,27 +1,26 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useControls } from "leva";
-import { ModelProps } from "./ModelProps";
 
-export default function Frame({
-  angle,
-  rotation,
-  side = "front",
-  ...props
-}: ModelProps) {
+interface FrameProps {
+  angles: number[]; // Array of angles for each frame
+  rotations: Array<[number, number, number]>; // Array of rotation tuples
+  positions: Array<[number, number, number]>; // Array of position tuples
+  scale?: number;
+  mirror?: boolean;
+}
+
+export default function Frame({ angles, rotations, positions }: FrameProps) {
   const modelRef = useRef<THREE.Object3D>();
-  const [size, setSize] = useState({ x: 0, y: 0, z: 0 });
 
-  const { scene: originalScene } = useGLTF("/Models/APPLIED1.glb");
+  const { scene: originalScene } = useGLTF("/Models/APPLIED3.glb");
 
   useEffect(() => {
     if (modelRef.current) {
       const boundingBox = new THREE.Box3().setFromObject(modelRef.current);
       const newSize = new THREE.Vector3();
       boundingBox.getSize(newSize);
-
-      setSize({ x: newSize.x, y: newSize.y, z: newSize.z });
 
       console.log("Width:", newSize.x);
       console.log("Height:", newSize.y);
@@ -45,62 +44,61 @@ export default function Frame({
     },
   });
 
-  const planeNormal = useMemo(() => {
-    const radians = (angle * Math.PI) / 180;
-    return new THREE.Vector3(Math.cos(radians), 0, Math.sin(radians));
-  }, [angle]);
+  const planes = useMemo(() => {
+    return angles.map((angle) => {
+      const radians = (angle * Math.PI) / 180;
+      const planeNormal = new THREE.Vector3(
+        0,
+        Math.cos(radians),
+        Math.sin(radians)
+      );
+      return new THREE.Plane(planeNormal, planeYPosition);
+    });
+  }, [angles]);
 
-  const adjustedPlaneYPosition = useMemo(
-    () => (side === "back" ? -planeYPosition : planeYPosition),
-    [planeYPosition, side]
-  );
-
-  const plane = useMemo(
-    () => new THREE.Plane(planeNormal, adjustedPlaneYPosition),
-    [planeNormal, adjustedPlaneYPosition]
-  );
+  // Ensure the planes update when `planeYPosition` changes
+  useEffect(() => {
+    planes.forEach((plane) => {
+      plane.constant = planeYPosition;
+    });
+  }, [planeYPosition, planes]);
 
   useEffect(() => {
-    // Update plane constant to follow the model's position
-    const updateClippingPlane = () => {
-      if (modelRef.current) {
-        const modelPosition = new THREE.Vector3();
-        modelRef.current.getWorldPosition(modelPosition);
-        plane.constant = adjustedPlaneYPosition - planeNormal.dot(modelPosition);
-      }
-    };
+    planes.forEach((plane) => {
+      scene.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
 
-    // Apply unique clipping plane and shadow properties to the cloned scene
-    scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-
-        if (mesh.material instanceof THREE.Material) {
-          mesh.material = mesh.material.clone();
-          mesh.material.clippingPlanes = [plane];
-          mesh.material.clipIntersection = true;
-          mesh.material.needsUpdate = true;
+          if (mesh.material instanceof THREE.Material) {
+            mesh.material = mesh.material.clone();
+            mesh.material.clippingPlanes = [plane];
+            mesh.material.clipIntersection = true;
+            mesh.material.needsUpdate = true;
+          }
         }
-      }
+      });
     });
-
-    updateClippingPlane(); // Initial update
-  }, [scene, plane, planeNormal, adjustedPlaneYPosition]);
+  }, [scene, planes]);
 
   return (
     <>
-      <primitive
-        ref={modelRef}
-        object={scene}
-        rotation-y={rotation}
-        {...props}
-      />
-      <primitive
-        object={new THREE.PlaneHelper(plane, 5, 0xff0000)} // 5 is the size, red is the color
-      />
+      {rotations.map((rotation, index) => (
+        <primitive
+          key={index}
+          ref={index === 0 ? modelRef : undefined}
+          object={scene.clone()} // Clone scene for each frame
+          position={positions[index]}
+          rotation={rotation}
+        />
+      ))}
+      {planes.map((plane, index) => (
+        <primitive
+          key={`plane-${index}`}
+          object={new THREE.PlaneHelper(plane, 5, 0xff0000)} // Plane helper
+        />
+      ))}
     </>
   );
 }
-
