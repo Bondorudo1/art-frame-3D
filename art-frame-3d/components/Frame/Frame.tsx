@@ -37,9 +37,9 @@ export default function Frame({ angles, rotations, positions }: FrameProps) {
 
   const { planeYPosition } = useControls("Clipping Plane", {
     planeYPosition: {
-      value: 21.74,
+      value: 18.56,
       min: -50,
-      max: 21.74,
+      max: 18.56,
       step: 0.01,
     },
   });

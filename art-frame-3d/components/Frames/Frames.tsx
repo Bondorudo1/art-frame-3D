@@ -1,52 +1,8 @@
-// import { Suspense } from "react";
-// import Frame from "../Frame/Frame";
-// import { SizeProps } from "./SizeProps";
-
-// export default function Frames({ boxHeight, boxWidth, positionY }: SizeProps) {
-//   const precise = (value: number) => parseFloat(value.toFixed(6)); // Precision adjustment
-
-//   return (
-//     <>
-//       <group>
-//         <Suspense fallback={null}>
-//           {/* Frame 1 */}
-//           <Frame
-//             angle={45}
-//             scale={1}
-//             rotation={[0, 0, Math.PI / 2]} // Rotated by 90 degrees around Z
-//             position={[-0.9, precise(boxHeight / 2 + 0.5), 0]} // Adjusted precision
-//             positionY={positionY}
-//             mirror={true}
-//           />
-
-//           Frame 2
-//           <Frame
-//             angle={45}
-//             scale={1}
-//             rotation={[Math.PI / 2, 0, Math.PI / 2]} // Rotated by 90 degrees around Z
-//             position={[-0.9, precise(boxHeight / 2 + 0.5-10), precise(boxWidth / 2)]} // Adjusted for alignment
-//             positionY={positionY}
-//             mirror={true}
-//           />
-
-
-
-//           {/* Main Mesh */}
-//           <mesh scale={1} castShadow position={[0, -0.6, 0]}>
-//             <boxGeometry args={[1, boxHeight, boxWidth]} />
-//             <meshStandardMaterial color={"red"} />
-//           </mesh>
-//         </Suspense>
-//       </group>
-//     </>
-//   );
-// }
-
-
 import React from "react";
 import { Suspense } from "react";
 import Frame from "../Frame/Frame";
 import { SizeProps } from "./SizeProps";
+// import { OrthographicCamera } from "@react-three/drei";
 
 export default function Frames({ boxHeight, boxWidth }: SizeProps) {
   const precise = (value: number) => parseFloat(value.toFixed(6)); // Precision adjustment
@@ -54,26 +10,47 @@ export default function Frames({ boxHeight, boxWidth }: SizeProps) {
   return (
     <group>
       <Suspense fallback={null}>
+        {/* Top and Right Frames */}
         <Frame
-          angles={[45]} // Two angles
+          angles={[225]} // Shared angle for all frames
           rotations={[
-            [0, 0, Math.PI / 2], // Rotation for frame 1
-            [Math.PI / 2, 0, Math.PI / 2], // Rotation for frame 2
+            [Math.PI, 0, Math.PI / 2], // Bottom frame
+            [-Math.PI / 2, 0, Math.PI / 2], // Left frame
           ]}
           positions={[
-            [-0.9, precise(boxHeight / 2 + 0.5), 0], // Position for frame 1
-            [-0.9, precise(boxHeight / 2 + 0.5-11), precise(boxWidth / 2)+0.84], // Position for frame 2
+            [-0.9, precise(-boxHeight / 2) - 0.85, 7.9], // Bottom frame
+            [-0.9, 7.9, precise(-boxWidth / 2) - 0.85], // Left frame
+          ]}
+          scale={1}
+          mirror={true}
+        />
+        <Frame
+          angles={[45]} // Shared angle for all frames
+          rotations={[
+            [0, 0, Math.PI / 2], // Top frame
+            [Math.PI / 2, 0, Math.PI / 2], // Left frame
+          ]}
+          positions={[
+            [-0.9, precise(boxHeight / 2 )+0.85, -7.9], // Top frame
+            [-0.9, -7.9, precise(boxWidth / 2) + 0.85], // Left frame
           ]}
           scale={1}
           mirror={true}
         />
 
         {/* Main Mesh */}
-        <mesh scale={1} castShadow position={[0, -0.6, 0]}>
-          <boxGeometry args={[1, boxHeight, boxWidth]} />
-          <meshStandardMaterial color={"red"} />
+        <mesh scale={1} castShadow position={[0, 0, 0]}>
+          <boxGeometry args={[0.1, boxHeight, boxWidth]} />
+          <meshStandardMaterial color={"blue"} />
         </mesh>
       </Suspense>
+      {/* <OrthographicCamera
+        makeDefault
+        position={[0, 0, 10]}
+        zoom={50} // Adjust zoom to fit your scene
+        near={0.1}
+        far={1000}
+      /> */}
     </group>
   );
 }

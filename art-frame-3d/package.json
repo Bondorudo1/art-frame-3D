@@ -17,7 +17,9 @@
     "r3f-perf": "^7.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.170.0"
+    "three": "^0.170.0",
+    "three-csg-ts": "^3.2.0",
+    "three-stdlib": "^2.34.0"
   },
   "devDependencies": {
     "@types/node": "^20",
