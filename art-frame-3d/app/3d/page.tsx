@@ -18,7 +18,8 @@ export default function page() {
         shadows
         style={{ background: "#c9c7c7" }}
       >
-        <OrbitControls makeDefault />
+       <OrbitControls minDistance={0.1} maxDistance={500} />
+
         <Lights />
         <Underframe />
         <Frames boxWidth={56.7} boxHeight={56.7} positionY={0} />

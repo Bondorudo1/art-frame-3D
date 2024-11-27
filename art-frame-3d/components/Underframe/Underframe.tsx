@@ -20,7 +20,7 @@ const Underframe = () => {
   }, []);
 
   return (
-    <mesh rotation={[0, Math.PI / 2, 0]} position={[0.5, 0, 0]} geometry={frame}>
+    <mesh rotation={[0, Math.PI / 2, 0]} position={[0, 0, 0]} geometry={frame}>
       <TextureHelper
         colorMapUrl="./Textures/Oak/textures/oak_veneer_01_diff_1k.jpg"
         displacementMapUrl="./Textures/Oak/textures/oak_veneer_01_disp_1k.png"
