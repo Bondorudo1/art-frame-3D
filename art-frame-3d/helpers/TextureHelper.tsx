@@ -1,6 +1,6 @@
 import { useLoader } from '@react-three/fiber';
 import { TextureLoader } from 'three';
-import TextureHelperProps from "@/types/TextureTypes";
+import TextureHelperProps from "@/types/TextureHelperProps";
 import { EXRLoader } from 'three-stdlib';
 
 export default function TextureHelper({

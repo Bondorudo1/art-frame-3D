@@ -22,7 +22,7 @@ export default function Lights() {
         shadow-camera-right={3}
         shadow-camera-top={3}
         shadow-camera-bottom={-3}
-        position={[-2, 2, 3]}
+        position={[-50, 50, 50]}
         castShadow
         intensity={3}
       />

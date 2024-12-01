@@ -1,7 +1,7 @@
 "use client";
 
 import Lights from "@/components/Additions/Lights";
-import Underframe from "@/components/Underframe/Underframe";
+// import Underframe from "@/components/Underframe/Underframe";
 import Frames from "@/components/Frames/Frames";
 import { OrbitControls} from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
@@ -16,13 +16,13 @@ export default function page() {
         onCreated={(state) => (state.gl.localClippingEnabled = true)}
         dpr={[1, 2]}
         shadows
-        style={{ background: "#c9c7c7" }}
+        style={{ background: "black" }}
       >
        <OrbitControls minDistance={0.1} maxDistance={500} />
 
         <Lights />
-        <Underframe />
-        <Frames boxWidth={56.7} boxHeight={56.7} positionY={0} />
+        {/* <Underframe /> */}
+        <Frames boxWidth={30} boxHeight={20} positionY={0} />
       </Canvas>
       <Leva />
     </>
