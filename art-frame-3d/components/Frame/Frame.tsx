@@ -4,8 +4,6 @@
 // import { useControls } from "leva";
 // import ModelProps from "./ModelProps";
 
-
-
 // export default function Frame({
 //   angles,
 //   rotations,
@@ -15,8 +13,6 @@
 //   const modelRef = useRef<THREE.Object3D>();
 
 //   const { scene: originalScene } = useGLTF("/Models/APPLIED3.glb");
-
-
 
 //   // Clone the scene to ensure uniqueness
 //   const scene = useMemo(() => {
@@ -100,14 +96,10 @@
 //   );
 // }
 
-
 import React, { useEffect, useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import ModelProps from "./ModelProps";
-
-
-
 
 export default function Frame({
   angles,
@@ -115,8 +107,11 @@ export default function Frame({
   positions,
   planeYPositions,
 }: ModelProps) {
-  const modelRef = useRef<THREE.Object3D>();
   const { scene: originalScene } = useGLTF("/Models/APPLIED3.glb");
+  const modelRef = useRef<THREE.Object3D>();
+
+  
+  
 
   // Clone the scene to ensure uniqueness
   const scene = useMemo(() => {
@@ -129,7 +124,11 @@ export default function Frame({
   const planes = useMemo(() => {
     return angles.map((angle, index) => {
       const radians = (angle * Math.PI) / 180;
-      const planeNormal = new THREE.Vector3(0, Math.cos(radians), Math.sin(radians));
+      const planeNormal = new THREE.Vector3(
+        0,
+        Math.cos(radians),
+        Math.sin(radians)
+      );
       return new THREE.Plane(planeNormal, planeYPositions[index]);
     });
   }, [angles, planeYPositions]);
@@ -162,6 +161,7 @@ export default function Frame({
           object={scene.clone()} // Clone scene for each frame
           position={positions[index]}
           rotation={rotation}
+          planeYPositions={planeYPositions}
         />
       ))}
       {planes.map((plane, index) => (
@@ -173,3 +173,7 @@ export default function Frame({
     </>
   );
 }
+
+
+
+

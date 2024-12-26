@@ -106,9 +106,9 @@ export default function Frames({ boxHeight, boxWidth }: SizeProps) {
       frame1: [0, -3.535],
       frame2: [0, 3.535],
     }),
-    []
+    [] // Empty dependency is fine if the values are static.
   );
-
+  console.log(planeYPositions.frame1)
   const positions: Record<string, [number, number, number]> = useMemo(
     () => ({
       left: [-1, 26.25, precise(-boxWidth / 2) - 0.85],
